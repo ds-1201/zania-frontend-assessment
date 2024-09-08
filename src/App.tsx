@@ -25,14 +25,25 @@ const App: React.FC = () => {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
 
   const fetchCats = () => {
-    fetch("/api/cats")
-      .then((response) => response.json())
-      .then((data) => {
-        data = sortCatsByPosition(data);
-        setCats(data);
-      })
-      .catch((error) => console.error(error))
-      .finally(() => setIsLoading(false));
+    setIsLoading(true);
+    // fetch data from cache
+    if (localStorage.getItem("cats")) {
+      let data = JSON.parse(localStorage.getItem("cats")!);
+      data = sortCatsByPosition(data);
+      setCats(data);
+      setIsLoading(false);
+      return;
+    } else {
+      // fetch data from API
+      fetch("/api/cats")
+        .then((response) => response.json())
+        .then((data) => {
+          data = sortCatsByPosition(data);
+          setCats(data);
+        })
+        .catch((error) => console.error(error))
+        .finally(() => setIsLoading(false));
+    }
   };
 
   // Function to save documents via the REST API
@@ -48,6 +59,7 @@ const App: React.FC = () => {
       });
       setLastSaveTime(Date.now());
       setUnsavedChanges(false);
+      localStorage.setItem("cats", JSON.stringify(cats));
     } catch (error) {
       console.error("Failed to save documents:", error);
     } finally {

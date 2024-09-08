@@ -5,7 +5,7 @@ import { Cat } from "../interface";
 import staticCats from "./../static/data.json";
 
 const getInitialData = (): Cat[] => {
-  const data = localStorage.getItem("cats");
+  const data = localStorage.getItem("servercats");
   return data ? JSON.parse(data) : staticCats;
 };
 
@@ -21,7 +21,7 @@ export const handlers = [
   // Update cats order
   http.put("/api/cats", async ({ request }) => {
     const updatedDocuments = await request.json();
-    localStorage.setItem("cats", JSON.stringify(updatedDocuments));
+    localStorage.setItem("servercats", JSON.stringify(updatedDocuments));
     await delay();
     return HttpResponse.json(updatedDocuments);
   }),
@@ -31,7 +31,7 @@ export const handlers = [
     const newDocument = (await request.json()) as Cat;
     const data = getInitialData();
     data.push(newDocument);
-    localStorage.setItem("cats", JSON.stringify(data));
+    localStorage.setItem("servercats", JSON.stringify(data));
     return HttpResponse.json(newDocument);
   }),
 
@@ -41,7 +41,7 @@ export const handlers = [
     const data = getInitialData();
     const index = data.findIndex((doc) => doc.id === id);
     data.splice(index, 1);
-    localStorage.setItem("cats", JSON.stringify(data));
+    localStorage.setItem("servercats", JSON.stringify(data));
     return HttpResponse.json({ success: true });
   }),
 ];
