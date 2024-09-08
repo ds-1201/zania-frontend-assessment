@@ -13,6 +13,7 @@ import Card from "./components/card/Card";
 
 // utils
 import { sortCatsByPosition } from "./utils";
+import Skeleton from "react-loading-skeleton";
 
 const App: React.FC = () => {
   const [cats, setCats] = useState<Cat[]>([]);
@@ -136,7 +137,16 @@ const App: React.FC = () => {
   return (
     <div className="app">
       {isLoading ? (
-        <div className="spinner">Loading...</div>
+        // <div className="spinner">Loading...</div>
+        <ListManager
+          items={[1, 2, 3, 4, 5]}
+          direction="horizontal"
+          maxItems={3}
+          render={() => (
+            <Skeleton className="skeleton" width={"200px"} height={"220px"} />
+          )}
+          onDragEnd={reorderList}
+        />
       ) : (
         <>
           <ListManager

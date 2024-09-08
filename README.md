@@ -110,6 +110,7 @@
   
   <li><strong><code>msw</code> (Mock Service Worker)</strong>:<br>
   MSW for mocking API responses in the browser. This allows the application to simulate API calls without needing an actual backend server. MSW integrates easily into the development environment and offers a clean way to handle mock requests/responses, making it ideal for front-end-focused projects like this one.</li>
+
 </ol>
 
 <h2>Logic Overview</h2>

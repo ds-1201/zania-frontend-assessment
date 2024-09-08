@@ -52,3 +52,13 @@ code {
   justify-content: center;
   height: 100vh;
 }
+
+.skeleton {
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin: 2rem;
+}
