@@ -8,9 +8,9 @@ import "react-loading-skeleton/dist/skeleton.css";
 Modal.setAppElement("#root");
 
 async function enableMocking() {
-  if (process.env.NODE_ENV !== "development") {
-    return;
-  }
+  // if (process.env.NODE_ENV !== "development") {
+  //   return;
+  // }
   const { worker } = await import("./mocks/browser");
   return worker.start();
 }
