@@ -31,7 +31,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    fetch("/data.json")
+    fetch("/api/documents")
       .then((response) => response.json())
       .then((data) => {
         const sortedDocuments = data.sort(
@@ -43,25 +43,20 @@ const App: React.FC = () => {
       .catch((error) => console.error(error));
   }, []);
 
+  // Draggable Handlers
   const onDragEnd = (result: any) => {
-    // Exit if no valid drop destination
     if (!result.destination) return;
-
     const reorderedDocuments = Array.from(documents);
-    // Remove dragged item
     const [movedItem] = reorderedDocuments.splice(result.source.index, 1);
-    // Insert dragged item into the new position
     reorderedDocuments.splice(result.destination.index, 0, movedItem);
-
-    // Update the position based on the new order
     const updatedDocuments = reorderedDocuments.map((doc, index) => ({
       ...doc,
       position: index,
     }));
-
     setDocuments(updatedDocuments);
   };
 
+  // Modal Handlers
   const openImage = (type: string) => {
     setSelectedImage(imageMap[type]);
   };
@@ -102,6 +97,7 @@ const App: React.FC = () => {
                           alt={title}
                           className="thumbnail"
                         />
+
                         <h3>{title}</h3>
                       </div>
                     )}
