@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Documentation</title>
-</head>
-<body>
-
 <h1>Project Documentation</h1>
+
+<h3>Zania Frontend Coding Challenge</h3>
 
 <h2>Overview</h2>
 
@@ -18,7 +11,6 @@
 <p>Here’s a look at the structure of the project:</p>
 
 <pre>
-/public
 /src
   ├── /components/card
   │     ├── Card.module.css
@@ -36,11 +28,7 @@
   ├── index.tsx
   ├── index.css
   ├── react-app-env.d.ts
-/.gitignore
-/package-lock.json
-/package.json
-/README.md
-/tsconfig.json
+
 </pre>
 
 <h3>Key Files:</h3>
@@ -99,7 +87,7 @@
   </li>
   
   <li><strong>Access the app</strong>:<br>
-  Once the containers are running, you can access the app at <code>http://localhost:3000</code>.
+  Once the container is running, you can access the app at <code>http://localhost:3000</code>.
   </li>
   
   <li><strong>Shut down</strong>:<br>
@@ -140,7 +128,4 @@
   <li><strong>Spinner on image load</strong>: A placeholder spinner is displayed while the images are being loaded, providing a visual indication to users when the image has not yet fully loaded.</li>
 </ol>
 
-<p>This documentation provides an overview of how to use the application locally and via Docker, along with details on the thought process behind architectural decisions and package selection.</p>
-
 </body>
-</html>
