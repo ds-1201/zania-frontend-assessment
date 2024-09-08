@@ -10,13 +10,15 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ openImage, cat }) => {
   return (
     <div className={`${styles.card}`} onClick={() => openImage(cat.imageSrc)}>
-      <img
-        src={cat.imageSrc}
-        alt={cat.title}
-        className={`${styles.thumbnail}`}
-      />
+      <>
+        <img
+          src={cat.imageSrc}
+          alt={cat.title}
+          className={`${styles.thumbnail}`}
+        />
 
-      <h3>{cat.title}</h3>
+        <h3>{cat.title}</h3>
+      </>
     </div>
   );
 };

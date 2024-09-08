@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 // import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Modal from "react-modal";
 import { ListManager } from "react-beautiful-dnd-grid";
+import moment from "moment";
 
 // interface
 import { Cat } from "./interface";
@@ -16,29 +17,71 @@ import { sortCatsByPosition } from "./utils";
 const App: React.FC = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const [lastSaveTime, setLastSaveTime] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+
   const fetchCats = () => {
-    const cache = localStorage.getItem("cats");
-    if (cache) {
-      setCats(sortCatsByPosition(JSON.parse(cache)));
-      setIsLoading(false);
-    } else {
-      fetch("/api/cats")
-        .then((response) => response.json())
-        .then((data) => {
-          data = sortCatsByPosition(data);
-          setCats(data);
-          localStorage.setItem("cats", JSON.stringify(data));
-        })
-        .catch((error) => console.error(error))
-        .finally(() => setIsLoading(false));
+    fetch("/api/cats")
+      .then((response) => response.json())
+      .then((data) => {
+        data = sortCatsByPosition(data);
+        setCats(data);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  // Function to save documents via the REST API
+  const saveCats = async () => {
+    setSaving(true);
+    try {
+      await fetch("/api/cats", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(cats),
+      });
+      setLastSaveTime(Date.now());
+      setUnsavedChanges(false);
+    } catch (error) {
+      console.error("Failed to save documents:", error);
+    } finally {
+      setSaving(false);
     }
   };
 
   useEffect(() => {
     fetchCats();
   }, []);
+
+  // Call the API to save documents every 5 seconds if there are unsaved changes
+  useEffect(() => {
+    if (!unsavedChanges) return;
+    const interval = setInterval(() => {
+      if (unsavedChanges) {
+        saveCats();
+      }
+    }, 5000);
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [unsavedChanges]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (lastSaveTime) {
+        setLastSaveTime((prevTime) => prevTime);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastSaveTime]);
 
   // Draggable Handlers
   const sortCats = () => {
@@ -52,26 +95,21 @@ const App: React.FC = () => {
     const list = cats;
     if (destinationIndex === 0) {
       list[sourceIndex].position = list[0].position - 1;
-      sortCats();
-      return;
-    }
-    if (destinationIndex === list.length - 1) {
+    } else if (destinationIndex === list.length - 1) {
       list[sourceIndex].position = list[list.length - 1].position + 1;
-      sortCats();
-      return;
-    }
-    if (destinationIndex < sourceIndex) {
+    } else if (destinationIndex < sourceIndex) {
       list[sourceIndex].position =
         (list[destinationIndex].position +
           list[destinationIndex - 1].position) /
         2;
-      sortCats();
-      return;
+    } else {
+      list[sourceIndex].position =
+        (list[destinationIndex].position +
+          list[destinationIndex + 1].position) /
+        2;
     }
-    list[sourceIndex].position =
-      (list[destinationIndex].position + list[destinationIndex + 1].position) /
-      2;
     sortCats();
+    setUnsavedChanges(true);
   };
 
   // Modal Handlers
@@ -88,13 +126,21 @@ const App: React.FC = () => {
       {isLoading ? (
         <div className="spinner">Loading...</div>
       ) : (
-        <ListManager
-          items={cats}
-          direction="horizontal"
-          maxItems={3}
-          render={(cat) => <Card cat={cat} openImage={openImage} />}
-          onDragEnd={reorderList}
-        />
+        <>
+          <ListManager
+            items={cats}
+            direction="horizontal"
+            maxItems={3}
+            render={(cat) => <Card cat={cat} openImage={openImage} />}
+            onDragEnd={reorderList}
+          />
+          <div>
+            {saving && <p> Saving...</p>}
+            {!saving && lastSaveTime && (
+              <p>Saved {`${moment(lastSaveTime).fromNow()}`}</p>
+            )}
+          </div>
+        </>
       )}
 
       <Modal
